@@ -39,9 +39,13 @@ PROGMEM_STRING_TABLE(MQTTDisconnectReasonStrings, "TCP disconnected", "Unaccepta
 
 MQTTClientComponent::MQTTClientComponent() {
   global_mqtt_client = this;
-  char mac_addr[MAC_ADDRESS_BUFFER_SIZE];
-  get_mac_address_into_buffer(mac_addr);
-  this->credentials_.client_id = make_name_with_suffix(App.get_name(), '-', mac_addr, MAC_ADDRESS_BUFFER_SIZE - 1);
+  if (App.is_name_add_mac_suffix_enabled()) {
+    this->credentials_.client_id = App.get_name();
+  } else {
+    char mac_addr[MAC_ADDRESS_BUFFER_SIZE];
+    get_mac_address_into_buffer(mac_addr);
+    this->credentials_.client_id = make_name_with_suffix(App.get_name(), '-', mac_addr, MAC_ADDRESS_BUFFER_SIZE - 1);
+  }
 }
 
 // Connection
